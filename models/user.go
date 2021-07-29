@@ -1,5 +1,6 @@
 package models
 
 type UserModel interface {
-	Get() []User
+	Get() ([]User, error)
+	Insert(User) (User, error)
 }
