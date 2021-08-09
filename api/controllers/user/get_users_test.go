@@ -15,6 +15,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	setup()
 	os.Exit(m.Run())
 }
 
@@ -27,10 +28,10 @@ func TestGetUsers(t *testing.T) {
 
 	// setting controller
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users", nil)
 	res := httptest.NewRecorder()
-	c := e.NewContext(req, res)
-	userController.GetUser(c)
+	context := e.NewContext(req, res)
+	userController.GetUser(context)
 
 	// build struct response
 	type Response struct {
@@ -44,4 +45,14 @@ func TestGetUsers(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
 		assert.Equal(t, 0, len(response.Users))
 	})
+}
+
+func setup() {
+	// create database connection
+	config := config.GetConfig()
+	db := util.MysqlDatabaseConnection(config)
+
+	// cleaning data before testing
+	db.Migrator().DropTable(&models.User{})
+	db.AutoMigrate(&models.User{})
 }
