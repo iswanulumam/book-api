@@ -5,4 +5,4 @@ database:
   port: 3306
   username: "root"
   password: "admin123"
-  name: "db_bookapi"
+  name: "db_bookapi_test"

@@ -27,6 +27,8 @@ func MysqlDatabaseConnection(config *config.AppConfig) *gorm.DB {
 		panic(err)
 	}
 
+	// DatabaseMigration(db)
+
 	return db
 }
 

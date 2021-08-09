@@ -39,7 +39,7 @@ func initConfig() *AppConfig {
 	var defaultConfig AppConfig
 	defaultConfig.Port = 8000
 	defaultConfig.Database.Driver = "mysql"
-	defaultConfig.Database.Name = "db_bookapi"
+	defaultConfig.Database.Name = "db_bookapi_test"
 	defaultConfig.Database.Address = "localhost"
 	defaultConfig.Database.Port = 3306
 	defaultConfig.Database.Username = "root"
@@ -50,7 +50,7 @@ func initConfig() *AppConfig {
 	viper.AddConfigPath("./config/")
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Info("error to load config file, will use default value ", err)
+		// log.Info("error to load config file, will use default value ", err)
 		return &defaultConfig
 	}
 
