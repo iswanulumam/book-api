@@ -3,6 +3,7 @@ module alta/book-api
 go 1.15
 
 require (
+	github.com/go-playground/validator/v10 v10.9.0
 	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/labstack/echo/v4 v4.4.0
 	github.com/labstack/gommon v0.3.0
