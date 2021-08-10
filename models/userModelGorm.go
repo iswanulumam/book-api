@@ -18,6 +18,14 @@ func (m *GormUserModel) Get() ([]User, error) {
 	return users, nil
 }
 
+func (m *GormUserModel) GetOne(userId int) (User, error) {
+	var user User
+	if err := m.db.Find(&user, userId).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 func (m *GormUserModel) Insert(user User) (User, error) {
 	if err := m.db.Save(&user).Error; err != nil {
 		return user, err

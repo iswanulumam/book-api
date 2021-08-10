@@ -1,6 +1,7 @@
 package user
 
 import (
+	"alta/book-api/api/controllers/user/response"
 	"alta/book-api/config"
 	"alta/book-api/models"
 	"alta/book-api/util"
@@ -29,19 +30,19 @@ func TestGetUsers(t *testing.T) {
 
 	// setting controller
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/users", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 	context := e.NewContext(req, res)
 	userController.GetUser(context)
 
 	// build struct response
-	type User struct {
-		Name  string `json:"user"`
-		Email string `json:"email"`
-	}
 	type Response struct {
-		Users []User `json:"users"`
+		Users []struct {
+			Name  string `json:"name"`
+			Email string `json:"email"`
+		} `json:"users"`
 	}
+
 	var response Response
 	resBody := res.Body.String()
 	json.Unmarshal([]byte(resBody), &response)
@@ -51,6 +52,36 @@ func TestGetUsers(t *testing.T) {
 		assert.Equal(t, 1, len(response.Users))
 		assert.Equal(t, response.Users[0].Name, "Name Test A")
 		assert.Equal(t, response.Users[0].Email, "test@alterra.id")
+	})
+}
+
+func TestGetUserOne(t *testing.T) {
+	// create database connection and create controller
+	config := config.GetConfig()
+	db := util.MysqlDatabaseConnection(config)
+	userModel := models.NewUserModel(db)
+	userController := NewController(userModel)
+
+	// setting controller
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath("/users/:id")
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+
+	userController.GetUserOne(context)
+
+	// Unmarshal respose string to struct
+	var response response.GetUserOneResponse
+	resBody := res.Body.String()
+	json.Unmarshal([]byte(resBody), &response)
+
+	t.Run("GET /users/:id", func(t *testing.T) {
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, "Name Test A", response.Name)
+		assert.Equal(t, "test@alterra.id", response.Email)
 	})
 }
 
@@ -67,7 +98,7 @@ func setup() {
 	var newUser models.User
 	newUser.Name = "Name Test A"
 	newUser.Email = "test@alterra.id"
-	newUser.Password = "password@alterra.id"
+	newUser.Password = "password123"
 
 	// user dummy data with model
 	userModel := models.NewUserModel(db)

@@ -6,6 +6,7 @@ import (
 	"alta/book-api/api/controllers/user/response"
 	"alta/book-api/models"
 	"net/http"
+	"strconv"
 
 	echo "github.com/labstack/echo/v4"
 )
@@ -28,6 +29,24 @@ func (controller *Controller) GetUser(c echo.Context) error {
 	}
 
 	result := response.NewGetUserResponse(users)
+
+	return c.JSON(http.StatusOK, result)
+}
+
+func (controller *Controller) GetUserOne(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	user, errGetOne := controller.userModel.GetOne(id)
+
+	if errGetOne != nil {
+		return c.JSON(http.StatusInternalServerError, common.NewInternalServerErrorResponse())
+	}
+
+	result := response.NewGetUserOneResponse(user)
 
 	return c.JSON(http.StatusOK, result)
 }
