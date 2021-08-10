@@ -27,7 +27,7 @@ func TestDresponse(t *testing.T) {
 
 	t.Run("func NewConflictResponse()", func(t *testing.T) {
 		Conflict := NewConflictResponse()
-		assert.Equal(t, Conflict.Code, 400)
+		assert.Equal(t, Conflict.Code, 409)
 		assert.Equal(t, Conflict.Message, "Data has been modified")
 	})
 }

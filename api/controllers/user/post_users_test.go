@@ -23,9 +23,9 @@ func TestPostUsers(t *testing.T) {
 
 	// input controller
 	reqBody, _ := json.Marshal(map[string]string{
-		"name":     "Iswanul Umam",
-		"email":    "umam@alterra.id",
-		"password": "admin123",
+		"name":     "Name Test",
+		"email":    "test@alterra.id",
+		"password": "test123",
 	})
 
 	// setting controller
@@ -38,7 +38,8 @@ func TestPostUsers(t *testing.T) {
 
 	// build struct response
 	type Response struct {
-		Users []interface{} `json:"users"`
+		Name  string `json:"name"`
+		Email string `json:"email"`
 	}
 	var response Response
 	resBody := res.Body.String()
@@ -47,5 +48,7 @@ func TestPostUsers(t *testing.T) {
 	// testing stuff
 	t.Run("POST /users", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
+		assert.Equal(t, "Name Test", response.Name)
+		assert.Equal(t, "test@alterra.id", response.Email)
 	})
 }

@@ -5,6 +5,7 @@ import (
 	"alta/book-api/models"
 	"alta/book-api/util"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -34,8 +35,12 @@ func TestGetUsers(t *testing.T) {
 	userController.GetUser(context)
 
 	// build struct response
+	type User struct {
+		Name  string `json:"user"`
+		Email string `json:"email"`
+	}
 	type Response struct {
-		Users []interface{} `json:"users"`
+		Users []User `json:"users"`
 	}
 	var response Response
 	resBody := res.Body.String()
@@ -43,7 +48,9 @@ func TestGetUsers(t *testing.T) {
 
 	t.Run("GET /users", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
-		assert.Equal(t, 0, len(response.Users))
+		assert.Equal(t, 1, len(response.Users))
+		assert.Equal(t, response.Users[0].Name, "Name Test A")
+		assert.Equal(t, response.Users[0].Email, "test@alterra.id")
 	})
 }
 
@@ -55,4 +62,17 @@ func setup() {
 	// cleaning data before testing
 	db.Migrator().DropTable(&models.User{})
 	db.AutoMigrate(&models.User{})
+
+	// preparate dummy data
+	var newUser models.User
+	newUser.Name = "Name Test A"
+	newUser.Email = "test@alterra.id"
+	newUser.Password = "password@alterra.id"
+
+	// user dummy data with model
+	userModel := models.NewUserModel(db)
+	_, err := userModel.Insert(newUser)
+	if err != nil {
+		fmt.Println(err)
+	}
 }

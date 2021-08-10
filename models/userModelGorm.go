@@ -6,6 +6,10 @@ type GormUserModel struct {
 	db *gorm.DB
 }
 
+func NewUserModel(db *gorm.DB) *GormUserModel {
+	return &GormUserModel{db: db}
+}
+
 func (m *GormUserModel) Get() ([]User, error) {
 	var users []User
 	if err := m.db.Find(&users).Error; err != nil {
@@ -19,8 +23,4 @@ func (m *GormUserModel) Insert(user User) (User, error) {
 		return user, err
 	}
 	return user, nil
-}
-
-func NewUserModel(db *gorm.DB) *GormUserModel {
-	return &GormUserModel{db: db}
 }

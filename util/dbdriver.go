@@ -2,7 +2,6 @@ package util
 
 import (
 	"alta/book-api/config"
-	"alta/book-api/models"
 	"fmt"
 
 	"github.com/labstack/gommon/log"
@@ -32,6 +31,6 @@ func MysqlDatabaseConnection(config *config.AppConfig) *gorm.DB {
 	return db
 }
 
-func DatabaseMigration(db *gorm.DB) {
-	db.AutoMigrate(models.User{})
-}
+// func DatabaseMigration(db *gorm.DB) {
+// 	db.AutoMigrate(models.User{})
+// }
