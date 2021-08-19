@@ -19,8 +19,8 @@ func NewController(customerModel models.CustomerModel) *Controller {
 	}
 }
 
-func (controller *Controller) GetAll(c echo.Context) error {
-	customer, err := controller.customerModel.Get()
+func (controller *Controller) GetAllCustomerController(c echo.Context) error {
+	customer, err := controller.customerModel.GetAll()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, common.NewInternalServerErrorResponse())
 	}
@@ -28,14 +28,14 @@ func (controller *Controller) GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, customer)
 }
 
-func (controller *Controller) GetOne(c echo.Context) error {
+func (controller *Controller) GetCustomerController(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
 
-	user, errGetOne := controller.customerModel.GetOne(id)
+	user, errGetOne := controller.customerModel.Get(id)
 	if errGetOne != nil {
 		return c.JSON(http.StatusInternalServerError, common.NewInternalServerErrorResponse())
 	}
@@ -53,7 +53,7 @@ func (controller *Controller) GetOne(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-func (controller *Controller) PostOne(c echo.Context) error {
+func (controller *Controller) PostCustomerController(c echo.Context) error {
 	// bind request value
 	type Request struct {
 		Name     string `json:"name" form:"name"`
@@ -81,7 +81,7 @@ func (controller *Controller) PostOne(c echo.Context) error {
 	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
 }
 
-func (controller *Controller) EditOne(c echo.Context) error {
+func (controller *Controller) EditCustomerController(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -112,7 +112,7 @@ func (controller *Controller) EditOne(c echo.Context) error {
 	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
 }
 
-func (controller *Controller) DeleteOne(c echo.Context) error {
+func (controller *Controller) DeleteCustomerController(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {

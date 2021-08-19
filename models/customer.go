@@ -29,14 +29,14 @@ func NewCustomerModel(db *gorm.DB) *GormCustomerModel {
 // Interface Customer
 
 type CustomerModel interface {
-	Get() ([]Customer, error)
-	GetOne(customerId int) (Customer, error)
+	GetAll() ([]Customer, error)
+	Get(customerId int) (Customer, error)
 	Insert(Customer) (Customer, error)
 	Edit(customer Customer, customerId int) (Customer, error)
 	Delete(customerId int) (Customer, error)
 }
 
-func (m *GormCustomerModel) Get() ([]Customer, error) {
+func (m *GormCustomerModel) GetAll() ([]Customer, error) {
 	var customer []Customer
 	if err := m.db.Find(&customer).Error; err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (m *GormCustomerModel) Get() ([]Customer, error) {
 	return customer, nil
 }
 
-func (m *GormCustomerModel) GetOne(customerId int) (Customer, error) {
+func (m *GormCustomerModel) Get(customerId int) (Customer, error) {
 	var customer Customer
 	if err := m.db.Find(&customer, customerId).Error; err != nil {
 		return customer, err

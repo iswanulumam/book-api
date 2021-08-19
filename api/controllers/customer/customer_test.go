@@ -44,7 +44,7 @@ func setup() {
 	}
 }
 
-func TestGetCustomers(t *testing.T) {
+func TestGetAllCustomerController(t *testing.T) {
 	// create database connection and create controller
 	config := config.GetConfig()
 	db := util.MysqlDatabaseConnection(config)
@@ -56,9 +56,9 @@ func TestGetCustomers(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 	context := e.NewContext(req, res)
-	context.SetPath("/customers/:id")
+	context.SetPath("/customers")
 
-	customerController.GetAll(context)
+	customerController.GetAllCustomerController(context)
 
 	// build struct response
 	type Response []struct {
@@ -79,7 +79,7 @@ func TestGetCustomers(t *testing.T) {
 	})
 }
 
-func TestGetCustomerById(t *testing.T) {
+func TestGetCustomerController(t *testing.T) {
 	// create database connection and create controller
 	config := config.GetConfig()
 	db := util.MysqlDatabaseConnection(config)
@@ -95,7 +95,7 @@ func TestGetCustomerById(t *testing.T) {
 	context.SetParamNames("id")
 	context.SetParamValues("1")
 
-	customerController.GetOne(context)
+	customerController.GetCustomerController(context)
 
 	// Unmarshal respose string to struct
 	type Response struct {
@@ -115,7 +115,7 @@ func TestGetCustomerById(t *testing.T) {
 	})
 }
 
-func TestPostCustomer(t *testing.T) {
+func TestPostCustomerController(t *testing.T) {
 	// create database connection and create controller
 	config := config.GetConfig()
 	db := util.MysqlDatabaseConnection(config)
@@ -137,10 +137,11 @@ func TestPostCustomer(t *testing.T) {
 	context := e.NewContext(req, res)
 	context.SetPath("/customers")
 
-	customerController.PostOne(context)
+	customerController.PostCustomerController(context)
 
 	// build struct response
 	type Response struct {
+		Code    int    `json:"code"`
 		Message string `json:"message"`
 	}
 	var response Response
@@ -150,10 +151,86 @@ func TestPostCustomer(t *testing.T) {
 	// testing stuff
 	t.Run("POST /customers", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
+		assert.Equal(t, 200, response.Code)
 		assert.Equal(t, "Successful Operation", response.Message)
 	})
 }
 
-func TestEditCustomer(t *testing.T) {
+func TestEditCustomerController(t *testing.T) {
+	// create database connection and create controller
+	config := config.GetConfig()
+	db := util.MysqlDatabaseConnection(config)
+	userModel := models.NewCustomerModel(db)
+	customerController := NewController(userModel)
 
+	// input controller
+	reqBody, _ := json.Marshal(map[string]string{
+		"name":     "Name Test New",
+		"email":    "test@alterra.id",
+		"password": "test123",
+	})
+
+	// setting controller
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+	res := httptest.NewRecorder()
+	req.Header.Set("Content-Type", "application/json")
+	context := e.NewContext(req, res)
+	context.SetPath("/customers/:id")
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+
+	customerController.EditCustomerController(context)
+
+	// build struct response
+	type Response struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	}
+	var response Response
+	resBody := res.Body.String()
+	json.Unmarshal([]byte(resBody), &response)
+
+	// testing stuff
+	t.Run("PUT /customers/:id", func(t *testing.T) {
+		assert.Equal(t, 200, res.Code)
+		assert.Equal(t, 200, response.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
+}
+
+func TestDeleteCustomerController(t *testing.T) {
+	// create database connection and create controller
+	config := config.GetConfig()
+	db := util.MysqlDatabaseConnection(config)
+	userModel := models.NewCustomerModel(db)
+	customerController := NewController(userModel)
+
+	// setting controller
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPut, "/", nil)
+	res := httptest.NewRecorder()
+	req.Header.Set("Content-Type", "application/json")
+	context := e.NewContext(req, res)
+	context.SetPath("/customers/:id")
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+
+	customerController.DeleteCustomerController(context)
+
+	// build struct response
+	type Response struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	}
+	var response Response
+	resBody := res.Body.String()
+	json.Unmarshal([]byte(resBody), &response)
+
+	// testing stuff
+	t.Run("PUT /customers/:id", func(t *testing.T) {
+		assert.Equal(t, 200, res.Code)
+		assert.Equal(t, 200, response.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
 }

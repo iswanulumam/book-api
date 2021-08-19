@@ -21,10 +21,10 @@ func main() {
 	db := util.MysqlDatabaseConnection(config)
 
 	//initiate user model
-	userModel := models.NewCustomerModel(db)
+	customerModel := models.NewCustomerModel(db)
 
 	//initiate user controller
-	newCustomerController := customerController.NewController(userModel)
+	newCustomerController := customerController.NewController(customerModel)
 
 	//create echo http
 	e := echo.New()
