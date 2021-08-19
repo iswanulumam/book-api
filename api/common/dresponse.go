@@ -2,38 +2,40 @@ package common
 
 //DefaultResponse default payload response
 type DefaultResponse struct {
-	Code    int    `json:"code"`
 	Message string `json:"message"`
+}
+
+//NewInternalServerErrorResponse default internal server error response
+func NewSuccessOperationResponse() DefaultResponse {
+	return DefaultResponse{
+		"success operation",
+	}
 }
 
 //NewInternalServerErrorResponse default internal server error response
 func NewInternalServerErrorResponse() DefaultResponse {
 	return DefaultResponse{
-		500,
-		"Internal server error",
+		"internal server error",
 	}
 }
 
 //NewNotFoundResponse default not found error response
 func NewNotFoundResponse() DefaultResponse {
 	return DefaultResponse{
-		404,
-		"Not found",
+		"not found",
 	}
 }
 
 //NewBadRequestResponse default not found error response
 func NewBadRequestResponse() DefaultResponse {
 	return DefaultResponse{
-		400,
-		"Bad request",
+		"bad request",
 	}
 }
 
 //NewConflictResponse default not found error response
 func NewConflictResponse() DefaultResponse {
 	return DefaultResponse{
-		409,
-		"Data has been modified",
+		"data has been modified",
 	}
 }

@@ -1,7 +1,6 @@
-package user
+package customer
 
 import (
-	"alta/book-api/api/controllers/user/response"
 	"alta/book-api/config"
 	"alta/book-api/models"
 	"alta/book-api/util"
@@ -21,66 +20,71 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func TestGetUsers(t *testing.T) {
+func TestGetCustomers(t *testing.T) {
 	// create database connection and create controller
 	config := config.GetConfig()
 	db := util.MysqlDatabaseConnection(config)
-	userModel := models.NewUserModel(db)
-	userController := NewController(userModel)
+	customerModel := models.NewCustomerModel(db)
+	customerController := NewController(customerModel)
 
 	// setting controller
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 	context := e.NewContext(req, res)
-	userController.GetUser(context)
+	customerController.GetAll(context)
 
 	// build struct response
-	type Response struct {
-		Users []struct {
-			Name  string `json:"name"`
-			Email string `json:"email"`
-		} `json:"users"`
+	type Response []struct {
+		Name  string `json:"name"`
+		Email string `json:"email"`
 	}
 
 	var response Response
 	resBody := res.Body.String()
+
 	json.Unmarshal([]byte(resBody), &response)
 
-	t.Run("GET /users", func(t *testing.T) {
+	t.Run("GET /customers", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
-		assert.Equal(t, 1, len(response.Users))
-		assert.Equal(t, response.Users[0].Name, "Name Test A")
-		assert.Equal(t, response.Users[0].Email, "test@alterra.id")
+		assert.Equal(t, 1, len(response))
+		assert.Equal(t, response[0].Name, "Name Test B")
+		assert.Equal(t, response[0].Email, "test@alterra.id")
 	})
 }
 
-func TestGetUserOne(t *testing.T) {
+func TestGetCustomerOne(t *testing.T) {
 	// create database connection and create controller
 	config := config.GetConfig()
 	db := util.MysqlDatabaseConnection(config)
-	userModel := models.NewUserModel(db)
-	userController := NewController(userModel)
+	customerModel := models.NewCustomerModel(db)
+	customerController := NewController(customerModel)
 
 	// setting controller
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 	context := e.NewContext(req, res)
-	context.SetPath("/users/:id")
+	context.SetPath("/customers/:id")
 	context.SetParamNames("id")
 	context.SetParamValues("1")
 
-	userController.GetUserOne(context)
+	customerController.GetOne(context)
 
 	// Unmarshal respose string to struct
-	var response response.GetUserOneResponse
+	type Response struct {
+		Name  string `json:"name"`
+		Email string `json:"email"`
+	}
+
+	var response Response
 	resBody := res.Body.String()
+
 	json.Unmarshal([]byte(resBody), &response)
 
-	t.Run("GET /users/:id", func(t *testing.T) {
+	t.Run("GET /customers/:id", func(t *testing.T) {
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, "Name Test A", response.Name)
+		assert.Equal(t, "Name Test B", response.Name)
 		assert.Equal(t, "test@alterra.id", response.Email)
 	})
 }
@@ -91,18 +95,18 @@ func setup() {
 	db := util.MysqlDatabaseConnection(config)
 
 	// cleaning data before testing
-	db.Migrator().DropTable(&models.User{})
-	db.AutoMigrate(&models.User{})
+	db.Migrator().DropTable(&models.Customer{})
+	db.AutoMigrate(&models.Customer{})
 
 	// preparate dummy data
-	var newUser models.User
-	newUser.Name = "Name Test A"
-	newUser.Email = "test@alterra.id"
-	newUser.Password = "password123"
+	var newCustomer models.Customer
+	newCustomer.Name = "Name Test B"
+	newCustomer.Email = "test@alterra.id"
+	newCustomer.Password = "password123"
 
 	// user dummy data with model
-	userModel := models.NewUserModel(db)
-	_, err := userModel.Insert(newUser)
+	customerModel := models.NewCustomerModel(db)
+	_, err := customerModel.Insert(newCustomer)
 	if err != nil {
 		fmt.Println(err)
 	}

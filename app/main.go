@@ -2,7 +2,7 @@ package main
 
 import (
 	"alta/book-api/api"
-	userController "alta/book-api/api/controllers/user"
+	customerController "alta/book-api/api/controllers/customer"
 	"alta/book-api/config"
 	"alta/book-api/models"
 	"alta/book-api/util"
@@ -21,16 +21,16 @@ func main() {
 	db := util.MysqlDatabaseConnection(config)
 
 	//initiate user model
-	userModel := models.NewUserModel(db)
+	userModel := models.NewCustomerModel(db)
 
 	//initiate user controller
-	newUserController := userController.NewController(userModel)
+	newCustomerController := customerController.NewController(userModel)
 
 	//create echo http
 	e := echo.New()
 
 	//register API path and controller
-	api.RegisterPath(e, newUserController)
+	api.RegisterPath(e, newCustomerController)
 
 	// run server
 	address := fmt.Sprintf("localhost:%d", config.Port)
