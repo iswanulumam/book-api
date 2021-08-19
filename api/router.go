@@ -9,7 +9,6 @@ import (
 func RegisterPath(e *echo.Echo, customerController *customer.Controller) {
 	e.POST("/customers/register", customerController.PostCustomerController)
 	/// e.POST("/customers/login", customerController.PostLogin)
-
 	e.GET("/customers", customerController.GetAllCustomerController)
 	e.GET("/customers/:id", customerController.GetCustomerController)
 	e.PUT("/customers/:id", customerController.EditCustomerController)

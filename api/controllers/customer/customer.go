@@ -22,7 +22,7 @@ func NewController(customerModel models.CustomerModel) *Controller {
 func (controller *Controller) GetAllCustomerController(c echo.Context) error {
 	customer, err := controller.customerModel.GetAll()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, common.NewInternalServerErrorResponse())
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
 
 	return c.JSON(http.StatusOK, customer)
@@ -35,17 +35,12 @@ func (controller *Controller) GetCustomerController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
 
-	user, errGetOne := controller.customerModel.Get(id)
-	if errGetOne != nil {
+	user, err := controller.customerModel.Get(id)
+	if err != nil {
 		return c.JSON(http.StatusInternalServerError, common.NewInternalServerErrorResponse())
 	}
 
-	type Response struct {
-		Name  string `json:"name"`
-		Email string `json:"email"`
-	}
-
-	response := Response{
+	response := GetCustomerResponse{
 		Name:  user.Name,
 		Email: user.Email,
 	}
@@ -55,13 +50,8 @@ func (controller *Controller) GetCustomerController(c echo.Context) error {
 
 func (controller *Controller) PostCustomerController(c echo.Context) error {
 	// bind request value
-	type Request struct {
-		Name     string `json:"name" form:"name"`
-		Email    string `json:"email" form:"email"`
-		Password string `json:"password" form:"password"`
-	}
+	var customerRequest PostCustomerRequest
 
-	var customerRequest Request
 	if err := c.Bind(&customerRequest); err != nil {
 		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
@@ -87,14 +77,9 @@ func (controller *Controller) EditCustomerController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
-	// bind request value
-	type Request struct {
-		Name     string `json:"name" form:"name"`
-		Email    string `json:"email" form:"email"`
-		Password string `json:"password" form:"password"`
-	}
 
-	var customerRequest Request
+	// bind request value
+	var customerRequest EditCustomerRequest
 	if err := c.Bind(&customerRequest); err != nil {
 		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
