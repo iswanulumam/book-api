@@ -32,6 +32,8 @@ type CustomerModel interface {
 	Get() ([]Customer, error)
 	GetOne(customerId int) (Customer, error)
 	Insert(Customer) (Customer, error)
+	Edit(customer Customer, customerId int) (Customer, error)
+	Delete(customerId int) (Customer, error)
 }
 
 func (m *GormCustomerModel) Get() ([]Customer, error) {
@@ -52,6 +54,33 @@ func (m *GormCustomerModel) GetOne(customerId int) (Customer, error) {
 
 func (m *GormCustomerModel) Insert(customer Customer) (Customer, error) {
 	if err := m.db.Save(&customer).Error; err != nil {
+		return customer, err
+	}
+	return customer, nil
+}
+
+func (m *GormCustomerModel) Edit(newCustomer Customer, customerId int) (Customer, error) {
+	var customer Customer
+	if err := m.db.Find(&customer, "id=?", customerId).Error; err != nil {
+		return customer, err
+	}
+
+	customer.Name = newCustomer.Name
+	customer.Email = newCustomer.Email
+	customer.Password = newCustomer.Password
+
+	if err := m.db.Save(&customer).Error; err != nil {
+		return customer, err
+	}
+	return customer, nil
+}
+
+func (m *GormCustomerModel) Delete(customerId int) (Customer, error) {
+	var customer Customer
+	if err := m.db.Find(&customer, "id=?", customerId).Error; err != nil {
+		return customer, err
+	}
+	if err := m.db.Delete(&customer).Error; err != nil {
 		return customer, err
 	}
 	return customer, nil

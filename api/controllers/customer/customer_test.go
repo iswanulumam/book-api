@@ -4,6 +4,7 @@ import (
 	"alta/book-api/config"
 	"alta/book-api/models"
 	"alta/book-api/util"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -20,6 +21,29 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+func setup() {
+	// create database connection
+	config := config.GetConfig()
+	db := util.MysqlDatabaseConnection(config)
+
+	// cleaning data before testing
+	db.Migrator().DropTable(&models.Customer{})
+	db.AutoMigrate(&models.Customer{})
+
+	// preparate dummy data
+	var newCustomer models.Customer
+	newCustomer.Name = "Name Test B"
+	newCustomer.Email = "test@alterra.id"
+	newCustomer.Password = "password123"
+
+	// user dummy data with model
+	customerModel := models.NewCustomerModel(db)
+	_, err := customerModel.Insert(newCustomer)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func TestGetCustomers(t *testing.T) {
 	// create database connection and create controller
 	config := config.GetConfig()
@@ -32,6 +56,8 @@ func TestGetCustomers(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	res := httptest.NewRecorder()
 	context := e.NewContext(req, res)
+	context.SetPath("/customers/:id")
+
 	customerController.GetAll(context)
 
 	// build struct response
@@ -53,7 +79,7 @@ func TestGetCustomers(t *testing.T) {
 	})
 }
 
-func TestGetCustomerOne(t *testing.T) {
+func TestGetCustomerById(t *testing.T) {
 	// create database connection and create controller
 	config := config.GetConfig()
 	db := util.MysqlDatabaseConnection(config)
@@ -89,25 +115,45 @@ func TestGetCustomerOne(t *testing.T) {
 	})
 }
 
-func setup() {
-	// create database connection
+func TestPostCustomer(t *testing.T) {
+	// create database connection and create controller
 	config := config.GetConfig()
 	db := util.MysqlDatabaseConnection(config)
+	userModel := models.NewCustomerModel(db)
+	customerController := NewController(userModel)
 
-	// cleaning data before testing
-	db.Migrator().DropTable(&models.Customer{})
-	db.AutoMigrate(&models.Customer{})
+	// input controller
+	reqBody, _ := json.Marshal(map[string]string{
+		"name":     "Name Test",
+		"email":    "test@alterra.id",
+		"password": "test123",
+	})
 
-	// preparate dummy data
-	var newCustomer models.Customer
-	newCustomer.Name = "Name Test B"
-	newCustomer.Email = "test@alterra.id"
-	newCustomer.Password = "password123"
+	// setting controller
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+	res := httptest.NewRecorder()
+	req.Header.Set("Content-Type", "application/json")
+	context := e.NewContext(req, res)
+	context.SetPath("/customers")
 
-	// user dummy data with model
-	customerModel := models.NewCustomerModel(db)
-	_, err := customerModel.Insert(newCustomer)
-	if err != nil {
-		fmt.Println(err)
+	customerController.PostOne(context)
+
+	// build struct response
+	type Response struct {
+		Message string `json:"message"`
 	}
+	var response Response
+	resBody := res.Body.String()
+	json.Unmarshal([]byte(resBody), &response)
+
+	// testing stuff
+	t.Run("POST /customers", func(t *testing.T) {
+		assert.Equal(t, 200, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
+}
+
+func TestEditCustomer(t *testing.T) {
+
 }
