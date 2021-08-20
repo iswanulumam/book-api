@@ -356,9 +356,13 @@
                         "schema": {
                             "type": "object",
                             "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "example": 200
+                                },
                                 "message": {
                                     "type": "string",
-                                    "example": "success operation"
+                                    "example": "Successful Operation"
                                 }
                             }       
                         }
@@ -372,9 +376,13 @@
                         "schema": {
                             "type": "object",
                             "properties": {
+                                "code": {
+                                    "type": "number",
+                                    "example": 400
+                                },
                                 "message": {
                                     "type": "string",
-                                    "example": "bad request"
+                                    "example": "Bad Request"
                                 }
                             }       
                         }

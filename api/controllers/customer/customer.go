@@ -37,7 +37,7 @@ func (controller *Controller) GetCustomerController(c echo.Context) error {
 
 	user, err := controller.customerModel.Get(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, common.NewInternalServerErrorResponse())
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
 
 	response := GetCustomerResponse{
@@ -105,7 +105,7 @@ func (controller *Controller) DeleteCustomerController(c echo.Context) error {
 	}
 
 	if _, err := controller.customerModel.Delete(id); err != nil {
-		return c.JSON(http.StatusInternalServerError, common.NewBadRequestResponse())
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
 
 	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
