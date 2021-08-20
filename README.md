@@ -24,4 +24,4 @@ The code implementation was inspired by Model View Controller [MVC](https://en.w
 ./test.sh
 ```
 3. See Report Coverage
-![alt text](https://github.com/iswanulumam/book-api/blob/master/coverage-test.png?raw=true)
+![alt text](https://github.com/iswanulumam/book-api/blob/main/coverage-test.png?raw=true)
