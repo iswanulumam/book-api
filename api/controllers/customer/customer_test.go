@@ -151,7 +151,6 @@ func TestPostCustomerController(t *testing.T) {
 	// testing stuff
 	t.Run("POST /customers", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
-		assert.Equal(t, 200, response.Code)
 		assert.Equal(t, "Successful Operation", response.Message)
 	})
 }
@@ -194,7 +193,6 @@ func TestEditCustomerController(t *testing.T) {
 	// testing stuff
 	t.Run("PUT /customers/:id", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
-		assert.Equal(t, 200, response.Code)
 		assert.Equal(t, "Successful Operation", response.Message)
 	})
 }
@@ -230,7 +228,6 @@ func TestDeleteCustomerController(t *testing.T) {
 	// testing stuff
 	t.Run("PUT /customers/:id", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
-		assert.Equal(t, 200, response.Code)
 		assert.Equal(t, "Successful Operation", response.Message)
 	})
 }
