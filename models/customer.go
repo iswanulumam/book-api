@@ -8,6 +8,7 @@ type Customer struct {
 	gorm.Model
 	Name     string
 	Email    string
+	Gender   string `sql:"type:ENUM('male', 'female')"`
 	Password string `gorm:"<-:false"`
 	Token    string `gorm:"<-:false"`
 }
