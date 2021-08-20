@@ -74,8 +74,8 @@ func TestGetAllCustomerController(t *testing.T) {
 	t.Run("GET /customers", func(t *testing.T) {
 		assert.Equal(t, 200, res.Code)
 		assert.Equal(t, 1, len(response))
-		assert.Equal(t, response[0].Name, "Name Test B")
-		assert.Equal(t, response[0].Email, "test@alterra.id")
+		assert.Equal(t, "Name Test B", response[0].Name)
+		assert.Equal(t, "test@alterra.id", response[0].Email)
 	})
 }
 
@@ -109,7 +109,7 @@ func TestGetCustomerController(t *testing.T) {
 	json.Unmarshal([]byte(resBody), &response)
 
 	t.Run("GET /customers/:id", func(t *testing.T) {
-		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, 200, res.Code)
 		assert.Equal(t, "Name Test B", response.Name)
 		assert.Equal(t, "test@alterra.id", response.Email)
 	})
