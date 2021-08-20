@@ -88,6 +88,7 @@ func (controller *Controller) EditCustomerController(c echo.Context) error {
 	customer := models.Customer{
 		Name:     customerRequest.Name,
 		Email:    customerRequest.Email,
+		Gender:   customerRequest.Gender,
 		Password: customerRequest.Password,
 	}
 
