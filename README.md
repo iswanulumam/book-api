@@ -8,17 +8,19 @@ The code implementation was inspired by Model View Controller [MVC](https://en.w
 -   **View**<br/>Not implemented in this code because not required User Interview (View)
 -   **Contoller (API)**<br/>API http handler or controller
 
-# How To Run Server
+# How To Run Apps
 
-Just execute code below in your console
-
+1. Create Database Based on Config
+2. Execute command:
 ```console
 ./run.sh
 ```
+3. Read Documentation in folder `openapi`
 
-# How To Consume The API
-
-There are 4 availables API that ready to use:
-
--   GET `/users`
--   POST `/users`
+# How To Test Apps
+1. Create Database Based on Config
+2. Execute command:
+```console
+./test.sh
+```
+3. See Report Coverage
