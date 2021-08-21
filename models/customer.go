@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"alta/book-api/api/middlewares"
+
+	"gorm.io/gorm"
+)
 
 // Model Customer
 
@@ -37,6 +41,7 @@ type CustomerModel interface {
 	Insert(Customer) (Customer, error)
 	Edit(customer Customer, customerId int) (Customer, error)
 	Delete(customerId int) (Customer, error)
+	Login(email, password string) (Customer, error)
 }
 
 func (m *GormCustomerModel) GetAll() ([]Customer, error) {
@@ -86,5 +91,26 @@ func (m *GormCustomerModel) Delete(customerId int) (Customer, error) {
 	if err := m.db.Delete(&customer).Error; err != nil {
 		return customer, err
 	}
+	return customer, nil
+}
+
+func (m *GormCustomerModel) Login(email, password string) (Customer, error) {
+	var customer Customer
+	var err error
+
+	if err = m.db.Where("email = ? AND password = ?", email, password).First(&customer).Error; err != nil {
+		return customer, err
+	}
+
+	customer.Token, err = middlewares.CreateToken(int(customer.ID))
+
+	if err != nil {
+		return customer, err
+	}
+
+	if err := m.db.Save(customer).Error; err != nil {
+		return customer, err
+	}
+
 	return customer, nil
 }
