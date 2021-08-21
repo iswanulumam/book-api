@@ -109,7 +109,7 @@ func TestGetCustomerController(t *testing.T) {
 	json.Unmarshal([]byte(resBody), &response)
 
 	t.Run("GET /customers/:id", func(t *testing.T) {
-		assert.Equal(t, 200, res.Code)
+		assert.Equal(t, 200, res.Code) // response.Data.
 		assert.Equal(t, "Name Test B", response.Name)
 		assert.Equal(t, "test@alterra.id", response.Email)
 	})
