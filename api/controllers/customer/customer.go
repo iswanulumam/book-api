@@ -112,3 +112,21 @@ func (controller *Controller) DeleteCustomerController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
 }
+
+func (controller *Controller) LoginCustomerController(c echo.Context) error {
+	var customerRequest LoginCustomerRequest
+
+	if err := c.Bind(&customerRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	customer, err := controller.customerModel.Login(customerRequest.Email, customerRequest.Password)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"token": customer.Token,
+	})
+}
